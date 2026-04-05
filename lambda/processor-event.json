@@ -1,0 +1,1 @@
+{"Records":[{"body":"{\"id\":\"manual-1775393670473\",\"latitude\":31.5204,\"timestamp\":1775393670473,\"category\":\"flood\",\"urgency\":9,\"locationAccuracyM\":10.2,\"text\":\"Manual processor test for SNS and DynamoDB\",\"longitude\":74.3587}","messageId":"manual-test-1775393670473"}]}
