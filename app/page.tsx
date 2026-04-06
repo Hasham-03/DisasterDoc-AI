@@ -67,23 +67,28 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 pb-24 pt-5 text-slate-100 md:px-8 md:pb-10 md:pt-8">
+    <main className="app-shell min-h-screen px-4 pb-24 pt-5 text-slate-100 md:px-8 md:pb-10 md:pt-8">
+      <div className="ambient-layer" aria-hidden />
+      <div className="grid-texture" aria-hidden />
+      <div className="glow-orb orb-a" aria-hidden />
+      <div className="glow-orb orb-b" aria-hidden />
+      <div className="glow-orb orb-c" aria-hidden />
       <div className="mx-auto w-full max-w-3xl">
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between md:mb-8">
+      <div className="reveal mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between md:mb-8">
         <h1 className="text-2xl font-bold leading-tight md:text-3xl">DisasterDoc AI</h1>
         <Link
           href="/dashboard"
-          className="inline-flex min-h-11 items-center justify-center rounded-full border border-cyan-400/40 px-4 py-2 text-sm font-medium text-cyan-300 transition hover:bg-cyan-400/10"
+          className="pulse-ring inline-flex min-h-11 items-center justify-center rounded-full border border-cyan-400/40 bg-slate-900/55 px-4 py-2 text-sm font-medium text-cyan-300 transition hover:bg-cyan-400/10"
         >
           Open Intelligence Dashboard
         </Link>
       </div>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="reveal reveal-delay-1 space-y-4 rounded-3xl border border-white/10 bg-slate-900/60 p-4 shadow-2xl shadow-slate-950/40 backdrop-blur md:p-6">
         <div className="grid gap-3 md:grid-cols-2">
           <label className="text-sm">
             <span className="mb-1 block text-slate-300">Category</span>
             <select
-              className="min-h-11 w-full rounded border border-white/10 bg-slate-900 p-3 text-slate-100"
+              className="min-h-11 w-full rounded border border-white/10 bg-slate-950/70 p-3 text-slate-100"
               value={category}
               onChange={(e) => setCategory(e.target.value as ReportCategory)}
             >
@@ -119,27 +124,27 @@ export default function Home() {
 
         <p className="text-xs text-slate-400">{locationLabel}</p>
 
-        <textarea 
-          className="min-h-36 w-full rounded border border-white/10 bg-slate-900 p-3 text-base text-slate-100 placeholder:text-slate-500"
+        <textarea
+          className="min-h-36 w-full rounded border border-white/10 bg-slate-950/70 p-3 text-base text-slate-100 placeholder:text-slate-500"
           placeholder="Describe the emergency..."
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
-        <button type="submit" className="min-h-11 w-full rounded bg-red-600 px-4 py-2 text-base font-semibold text-white transition hover:bg-red-500 sm:w-auto">
+        <button type="submit" className="min-h-11 w-full rounded bg-linear-to-r from-red-600 to-orange-500 px-4 py-2 text-base font-semibold text-white transition hover:brightness-110 sm:w-auto">
           Submit Report
         </button>
       </form>
       
-      <div className="mt-6 grid gap-3 sm:grid-cols-3 md:mt-8">
-        <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+      <div className="reveal reveal-delay-2 mt-6 grid gap-3 sm:grid-cols-3 md:mt-8">
+        <div className="tilt-card rounded-xl border border-white/10 bg-white/5 px-4 py-3">
           <p className="text-xs uppercase tracking-wide text-slate-400">Network</p>
           <p className="mt-1 text-base font-bold">{isOnline ? 'Online' : 'Offline'}</p>
         </div>
-        <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+        <div className="tilt-card rounded-xl border border-white/10 bg-white/5 px-4 py-3">
           <p className="text-xs uppercase tracking-wide text-slate-400">Pending Sync</p>
           <p className="mt-1 text-base font-bold">{pendingCount || 0}</p>
         </div>
-        <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+        <div className="tilt-card rounded-xl border border-white/10 bg-white/5 px-4 py-3">
           <p className="text-xs uppercase tracking-wide text-slate-400">Failed Sync Queue</p>
           <p className="mt-1 text-base font-bold">{failedCount || 0}</p>
         </div>
@@ -158,7 +163,7 @@ export default function Home() {
           void syncPendingReports();
           console.log('Manual write successful');
         }}
-        className="mt-4 min-h-11 w-full rounded bg-blue-500 p-2 text-base font-medium text-white transition hover:bg-blue-400 sm:w-auto"
+        className="reveal reveal-delay-3 mt-4 min-h-11 w-full rounded bg-blue-500/90 p-2 text-base font-medium text-white transition hover:bg-blue-400 sm:w-auto"
       >
         Force Database Write
       </button>

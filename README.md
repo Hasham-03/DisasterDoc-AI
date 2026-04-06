@@ -34,3 +34,20 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Deploy on AWS Amplify
+
+This repository includes an Amplify build spec in [amplify.yml](amplify.yml).
+
+Set these environment variables in Amplify before deploying:
+
+- `PINECONE_API_KEY`
+- `PINECONE_HOST`
+- `PINECONE_NAMESPACE`
+- `SNS_TOPIC_ARN`
+- `DDB_TABLE_NAME`
+- `AWS_REGION`
+
+Build command: `npm run build`
+
+Amplify will serve the Next.js app from the generated `.next` output.

@@ -37,3 +37,168 @@ textarea,
 button {
   font: inherit;
 }
+
+.app-shell {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.ambient-layer {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(16, 185, 129, 0.2), transparent 36%),
+    radial-gradient(circle at 88% 8%, rgba(56, 189, 248, 0.2), transparent 38%),
+    radial-gradient(circle at 80% 82%, rgba(251, 146, 60, 0.18), transparent 42%),
+    linear-gradient(165deg, #020617 0%, #0f172a 42%, #111827 100%);
+}
+
+.grid-texture {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.2;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.14) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+  animation: driftGrid 22s linear infinite;
+}
+
+.glow-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(48px);
+  opacity: 0.45;
+  z-index: -1;
+  animation: floatOrb 12s ease-in-out infinite;
+}
+
+.orb-a {
+  width: 360px;
+  height: 360px;
+  top: -120px;
+  right: -80px;
+  background: rgba(56, 189, 248, 0.38);
+}
+
+.orb-b {
+  width: 320px;
+  height: 320px;
+  left: -120px;
+  bottom: -90px;
+  background: rgba(16, 185, 129, 0.32);
+  animation-delay: -3.5s;
+}
+
+.orb-c {
+  width: 260px;
+  height: 260px;
+  right: 20%;
+  bottom: 10%;
+  background: rgba(251, 146, 60, 0.28);
+  animation-delay: -7s;
+}
+
+.reveal {
+  animation: revealUp 0.8s cubic-bezier(0.22, 0.8, 0.32, 1) both;
+}
+
+.reveal-delay-1 {
+  animation-delay: 120ms;
+}
+
+.reveal-delay-2 {
+  animation-delay: 220ms;
+}
+
+.reveal-delay-3 {
+  animation-delay: 320ms;
+}
+
+.tilt-card {
+  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
+}
+
+.tilt-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 45px rgba(8, 47, 73, 0.3);
+}
+
+.pulse-ring {
+  position: relative;
+}
+
+.pulse-ring::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: inherit;
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  opacity: 0;
+  animation: ringPulse 2.2s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes driftGrid {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(28px, 28px, 0);
+  }
+}
+
+@keyframes floatOrb {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -16px, 0) scale(1.05);
+  }
+}
+
+@keyframes ringPulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.08);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grid-texture,
+  .glow-orb,
+  .reveal,
+  .pulse-ring::after {
+    animation: none !important;
+  }
+
+  .tilt-card,
+  .tilt-card:hover {
+    transition: none;
+    transform: none;
+    box-shadow: none;
+  }
+}

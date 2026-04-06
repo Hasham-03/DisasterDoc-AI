@@ -121,14 +121,18 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 px-4 pb-24 pt-5 text-slate-100 md:px-6 md:pb-10 md:pt-10">
+    <div className="app-shell min-h-screen px-4 pb-24 pt-5 text-slate-100 md:px-6 md:pb-10 md:pt-10">
+      <div className="ambient-layer" aria-hidden />
+      <div className="grid-texture" aria-hidden />
+      <div className="glow-orb orb-a" aria-hidden />
+      <div className="glow-orb orb-b" aria-hidden />
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 md:gap-8">
-        <div>
+        <div className="reveal">
           <Link href="/" className="inline-flex min-h-11 items-center text-sm font-medium text-cyan-300 hover:text-cyan-200">
             ← Back to report entry
           </Link>
         </div>
-        <header className="space-y-3">
+        <header className="reveal reveal-delay-1 space-y-3">
           <p className="text-xs uppercase tracking-[0.2em] text-cyan-300 md:text-sm md:tracking-[0.3em]">DisasterDoc Intelligence</p>
           <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">
             Semantic search across emergency reports
@@ -138,10 +142,10 @@ export default function Dashboard() {
           </p>
         </header>
 
-        <section className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-2xl shadow-cyan-950/20 backdrop-blur md:p-6">
+        <section className="reveal reveal-delay-2 rounded-3xl border border-white/10 bg-slate-900/55 p-4 shadow-2xl shadow-cyan-950/20 backdrop-blur md:p-6">
           <div className="flex flex-col gap-3 md:flex-row">
             <input
-              className="min-h-11 w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-base text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-400"
+              className="min-h-11 w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-base text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-400"
               placeholder="Search: collapsed buildings, medical help, fire smoke, gas leak..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -153,7 +157,7 @@ export default function Dashboard() {
             />
             <button
               onClick={handleSearch}
-              className="min-h-11 rounded-2xl bg-cyan-500 px-5 py-3 text-base font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
+              className="pulse-ring min-h-11 rounded-2xl bg-cyan-500 px-5 py-3 text-base font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
               disabled={loading}
             >
               {loading ? 'Searching...' : 'Search'}
@@ -201,7 +205,7 @@ export default function Dashboard() {
           </div>
         </section>
 
-        <section className="grid gap-4">
+        <section className="reveal reveal-delay-3 grid gap-4">
           {filteredResults.length === 0 && !loading ? (
             <div className="rounded-3xl border border-dashed border-white/15 bg-white/5 p-8 text-slate-400">
               No reports match the current filters.
@@ -214,7 +218,7 @@ export default function Dashboard() {
             return (
             <article
               key={match.id}
-              className={`rounded-3xl border ${getUrgencyBorderClass(match.metadata?.urgency)} bg-slate-900/80 p-5 shadow-lg shadow-black/20`}
+              className={`tilt-card rounded-3xl border ${getUrgencyBorderClass(match.metadata?.urgency)} bg-slate-900/80 p-5 shadow-lg shadow-black/20`}
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <span className="text-sm font-semibold text-cyan-300">
@@ -263,19 +267,19 @@ export default function Dashboard() {
                 </span>
                 <button
                   onClick={() => updateWorkflow(match.id, 'acknowledged')}
-                  className="min-h-10 rounded bg-amber-500 px-3 py-2 text-sm font-medium text-slate-950"
+                  className="min-h-10 rounded bg-amber-500 px-3 py-2 text-sm font-medium text-slate-950 transition hover:brightness-110"
                 >
                   Acknowledge
                 </button>
                 <button
                   onClick={() => updateWorkflow(match.id, 'dispatched')}
-                  className="min-h-10 rounded bg-cyan-500 px-3 py-2 text-sm font-medium text-slate-950"
+                  className="min-h-10 rounded bg-cyan-500 px-3 py-2 text-sm font-medium text-slate-950 transition hover:brightness-110"
                 >
                   Dispatch
                 </button>
                 <button
                   onClick={() => updateWorkflow(match.id, 'resolved')}
-                  className="min-h-10 rounded bg-emerald-500 px-3 py-2 text-sm font-medium text-slate-950"
+                  className="min-h-10 rounded bg-emerald-500 px-3 py-2 text-sm font-medium text-slate-950 transition hover:brightness-110"
                 >
                   Resolve
                 </button>
@@ -285,7 +289,7 @@ export default function Dashboard() {
           })}
         </section>
 
-        <section className="rounded-3xl border border-white/10 bg-slate-900/50 p-4 md:p-6">
+        <section className="reveal reveal-delay-3 rounded-3xl border border-white/10 bg-slate-900/50 p-4 md:p-6">
           <h2 className="text-lg font-semibold text-slate-100">Local Device Reports (GPS Tracking)</h2>
           <p className="mt-1 text-sm text-slate-400">
             This section reads directly from the local offline database and always shows map tracking when captured.
