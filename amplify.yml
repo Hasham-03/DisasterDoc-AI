@@ -6,6 +6,14 @@ frontend:
         - npm ci
     build:
       commands:
+        - rm -f .env.production
+        - |
+          for VAR in PINECONE_API_KEY PINECONE_HOST PINECONE_NAMESPACE SNS_TOPIC_ARN DDB_TABLE_NAME AWS_REGION SYNC_LAMBDA_URL; do
+            eval VALUE="\$$VAR"
+            if [ -n "$VALUE" ]; then
+              echo "$VAR=$VALUE" >> .env.production
+            fi
+          done
         - npm run build
   artifacts:
     baseDirectory: .next

@@ -4,12 +4,16 @@ import { NextResponse } from 'next/server';
 export const runtime = 'nodejs';
 
 const bedrock = new BedrockRuntimeClient({ region: 'ap-south-1' });
-const PINECONE_API_KEY = process.env.PINECONE_API_KEY;
-const PINECONE_HOST = 'https://disaster-reports-27mvwjb.svc.aped-4627-b74a.pinecone.io';
+const DEFAULT_PINECONE_HOST = 'https://disaster-reports-27mvwjb.svc.aped-4627-b74a.pinecone.io';
+const DEFAULT_PINECONE_NAMESPACE = 'emergency-reports';
 
 export async function POST(req: Request) {
   try {
-    if (!PINECONE_API_KEY) {
+    const pineconeApiKey = process.env.PINECONE_API_KEY;
+    const pineconeHost = process.env.PINECONE_HOST ?? DEFAULT_PINECONE_HOST;
+    const pineconeNamespace = process.env.PINECONE_NAMESPACE ?? DEFAULT_PINECONE_NAMESPACE;
+
+    if (!pineconeApiKey) {
       return NextResponse.json({ error: 'Missing PINECONE_API_KEY' }, { status: 500 });
     }
 
@@ -30,17 +34,17 @@ export async function POST(req: Request) {
     const embedBody = new TextDecoder().decode(embedRes.body);
     const vector = JSON.parse(embedBody).embedding as number[];
 
-    const pineconeRes = await fetch(`${PINECONE_HOST}/query`, {
+    const pineconeRes = await fetch(`${pineconeHost}/query`, {
       method: 'POST',
       headers: {
-        'Api-Key': PINECONE_API_KEY,
+        'Api-Key': pineconeApiKey,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         vector,
         topK: 5,
         includeMetadata: true,
-        namespace: 'emergency-reports',
+        namespace: pineconeNamespace,
       }),
     });
 
