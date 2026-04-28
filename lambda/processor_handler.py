@@ -44,19 +44,21 @@ def _publish_critical_alert(report: dict):
     lng = report.get("lng", report.get("longitude"))
     map_link = f"https://www.google.com/maps?q={lat},{lng}" if lat is not None and lng is not None else "Location unavailable"
 
-    message = "\n".join(
-        [
-            "CRITICAL ALERT",
-            "",
-            f"Summary: {str(report.get('text', ''))[:180]}",
-            f"Location: {map_link}",
-        ]
-    )
+    message_parts = [
+        "CRITICAL ALERT",
+        "",
+        f"Summary: {str(report.get('text', ''))[:180]}",
+        f"Location: {map_link}",
+    ]
+
+    photos = report.get("photos", [])
+    if photos:
+        message_parts.append(f"Photos ({len(photos)}): {'; '.join(photos)}")
 
     sns.publish(
         TopicArn=SNS_TOPIC_ARN,
         Subject="Priority Disaster Report",
-        Message=message,
+        Message="\n".join(message_parts),
     )
 
 
@@ -113,6 +115,8 @@ def _upsert_pinecone(vector, report: dict):
         metadata["longitude"] = longitude
     if report.get("locationAccuracyM") is not None:
         metadata["locationAccuracyM"] = report.get("locationAccuracyM")
+    if report.get("photos"):
+        metadata["photoUrls"] = report.get("photos", [])
 
     payload = {
         "namespace": PINECONE_NAMESPACE,

@@ -52,6 +52,7 @@ def handler(event, context):
         "latitude": report.get("latitude", report.get("lat")),
         "longitude": report.get("longitude", report.get("lng")),
         "locationAccuracyM": report.get("locationAccuracyM"),
+        "photos": report.get("photos", []),
     }
 
     sqs.send_message(
