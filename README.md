@@ -74,6 +74,29 @@ Notes:
 - PINECONE_API_KEY is required for semantic search.
 - SNS_TOPIC_ARN is required only for critical alert publishing.
 - SYNC_LAMBDA_URL points to the ingestion Lambda URL.
+- S3_BUCKET is required for photo uploads; ensure the Amplify compute role has S3 presign and PutObject permissions.
+
+## Photo Pipeline
+
+Photos are captured via the floating "+" button on the report page:
+
+1. **Capture**: User selects "Add photos" (file picker) or "Take photos" (device camera)
+2. **Upload to S3** (app/page.tsx):
+   - Requests presigned PUT URL from `/api/s3/presign`
+   - Uploads photo via presigned PUT directly to S3 bucket
+   - Falls back to Data URL if S3 upload fails
+   - Stores S3 objectUrl (or Data URL) in local Dexie record
+3. **Local storage**: photos array in IndexedDB contains S3 URLs or data URLs
+4. **Cloud ingestion** (lambda/ingest_handler.py):
+   - Receives report with photos array from sync endpoint
+   - Forwards photos field to SQS for processor Lambda
+5. **Pinecone metadata** (lambda/processor_handler.py):
+   - Stores photoUrls in Pinecone metadata when indexing embeddings
+   - Critical SNS alerts (urgency >= 9) include photo URLs in message
+6. **Search results** (app/api/search/route.ts):
+   - Returns match.metadata.photoUrls from Pinecone vector search
+7. **Dashboard** (app/dashboard/page.tsx):
+   - Renders photo thumbnails for both local reports and cloud search results
 
 ## API Overview
 
@@ -89,7 +112,14 @@ POST /api/search
 - Accepts a query string
 - Generates query embedding through Bedrock
 - Runs top-k vector similarity search in Pinecone
-- Returns matched reports with metadata
+- Returns matched reports with metadata, including photoUrls from Pinecone metadata
+
+POST /api/s3/presign
+
+- Generates presigned PUT URLs for photo uploads to S3
+- Request body: `{ "fileName": "photo.jpg", "mimeType": "image/jpeg" }`
+- Response: `{ "signedUrl": "https://...", "objectUrl": "s3://bucket/..." }`
+- Used by report UI to upload photos before saving locally
 
 ## Deployment (AWS Amplify)
 
