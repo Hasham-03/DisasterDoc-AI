@@ -13,6 +13,7 @@ export default function Home() {
   const [locationLabel, setLocationLabel] = useState('Location not captured yet');
   const [photoNames, setPhotoNames] = useState<string[]>([]);
   const [showPhotoActions, setShowPhotoActions] = useState(false);
+  const [photoData, setPhotoData] = useState<string[]>([]);
   const { isOnline, syncPendingReports } = useSync();
   // This automatically updates the UI when IndexedDB changes
   const pendingCount = useLiveQuery(() => 
@@ -47,8 +48,21 @@ export default function Home() {
       input.setAttribute('capture', 'environment');
     }
 
-    input.onchange = () => {
-      updateSelectedPhotoNames(input.files);
+    input.onchange = async () => {
+      const files = input.files;
+      updateSelectedPhotoNames(files);
+      if (files && files.length > 0) {
+        const readAll = Array.from(files).map((f) =>
+          new Promise<string>((resolve) => {
+            const fr = new FileReader();
+            fr.onload = () => resolve(String(fr.result));
+            fr.onerror = () => resolve('');
+            fr.readAsDataURL(f);
+          })
+        );
+        const dataUrls = await Promise.all(readAll);
+        setPhotoData(dataUrls.filter(Boolean));
+      }
     };
 
     input.click();
@@ -73,10 +87,51 @@ export default function Home() {
       }
     }
 
+    let photosToSave: string[] | undefined = undefined;
+
+    if (photoData && photoData.length > 0) {
+      photosToSave = [];
+      for (let i = 0; i < photoData.length; i++) {
+        const dataUrl = photoData[i];
+        try {
+          const blob = await (await fetch(dataUrl)).blob();
+          const contentType = blob.type || 'image/jpeg';
+          const filename = `report-${Date.now()}-${i}.jpg`;
+
+          const presignRes = await fetch('/api/s3/presign', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename, contentType }),
+          });
+
+          if (!presignRes.ok) {
+            console.error('Presign failed', await presignRes.text());
+            // fallback to saving data URL directly
+            photosToSave.push(dataUrl);
+            continue;
+          }
+
+          const presignJson = await presignRes.json();
+          const signedUrl = presignJson.signedUrl as string | undefined;
+          const objectUrl = presignJson.objectUrl as string | undefined;
+
+          if (signedUrl) {
+            await fetch(signedUrl, { method: 'PUT', body: blob, headers: { 'Content-Type': contentType } });
+          }
+
+          photosToSave.push(objectUrl ?? dataUrl);
+        } catch (err) {
+          console.error('Photo upload failed', err);
+          photosToSave.push(dataUrl);
+        }
+      }
+    }
+
     await db.reports.add({
       text,
       urgency,
       category,
+      photos: photosToSave,
       latitude,
       longitude,
       locationAccuracyM,
@@ -89,6 +144,7 @@ export default function Home() {
     setUrgency(7);
     setCategory('medical');
     setPhotoNames([]);
+    setPhotoData([]);
     setShowPhotoActions(false);
     alert("Report saved locally!");
   };

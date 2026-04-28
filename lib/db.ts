@@ -10,6 +10,7 @@ export interface EmergencyReport {
   latitude?: number;
   longitude?: number;
   locationAccuracyM?: number;
+  photos?: string[];
   status: 'pending' | 'synced' | 'failed';
   timestamp: number;
   attempts?: number;
@@ -28,6 +29,9 @@ export class MyDatabase extends Dexie {
       reports: '++id, status, category, urgency, timestamp, attempts'
     });
     this.version(3).stores({
+      reports: '++id, status, category, urgency, timestamp, attempts, latitude, longitude'
+    });
+    this.version(4).stores({
       reports: '++id, status, category, urgency, timestamp, attempts, latitude, longitude'
     });
     console.log("IndexedDB Initialized: DisasterDocDB"); // Add this

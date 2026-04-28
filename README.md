@@ -66,6 +66,7 @@ SNS_TOPIC_ARN=
 AWS_REGION=ap-south-1
 DDB_TABLE_NAME=
 SYNC_LAMBDA_URL=
+S3_BUCKET=
 ```
 
 Notes:
@@ -103,6 +104,7 @@ Required Amplify environment variables:
 - DDB_TABLE_NAME
 - AWS_REGION
 - SYNC_LAMBDA_URL
+- S3_BUCKET
 
 Build command:
 

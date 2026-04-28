@@ -235,6 +235,14 @@ export default function Dashboard() {
                 {match.metadata?.text ?? 'No report text available'}
               </p>
 
+                  {Array.isArray(match.metadata?.photoUrls) && match.metadata!.photoUrls.length > 0 ? (
+                    <div className="mt-3 flex gap-2">
+                      {match.metadata!.photoUrls.slice(0, 3).map((url, i) => (
+                        <img key={i} src={String(url)} alt={`photo-${i}`} className="h-24 w-auto rounded-md object-cover" />
+                      ))}
+                    </div>
+                  ) : null}
+
               {location ? (
                 <div className="mt-3 text-sm text-slate-300">
                   <p>
@@ -319,6 +327,13 @@ export default function Dashboard() {
                     ) : (
                       <p className="mt-2 text-xs text-slate-500">No GPS captured for this report.</p>
                     )}
+                        {Array.isArray(report.photos) && report.photos.length > 0 && (
+                          <div className="mt-3 flex gap-2">
+                            {report.photos.slice(0, 3).map((src, i) => (
+                              <img key={i} src={src} alt={`local-photo-${i}`} className="h-20 w-auto rounded-md object-cover" />
+                            ))}
+                          </div>
+                        )}
                   </article>
                 );
               })
